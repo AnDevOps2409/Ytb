@@ -1,0 +1,48 @@
+.formatted-transcript {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.transcript-line {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  margin: 0;
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.transcript-paragraph {
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+  margin: 0;
+  text-align: justify;
+}
+
+.transcript-speaker {
+  font-weight: 600;
+  color: var(--accent-primary);
+  white-space: nowrap;
+  min-width: max-content;
+}
+
+.transcript-time {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  font-family: monospace;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+.transcript-text {
+  flex: 1;
+  color: var(--text-primary);
+}
