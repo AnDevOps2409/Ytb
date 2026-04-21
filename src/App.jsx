@@ -9,6 +9,7 @@ import EmptyState from "./components/EmptyState";
 import ErrorState from "./components/ErrorState";
 import HistoryPanel from "./components/HistoryPanel";
 import HistoryDetailModal from "./components/HistoryDetailModal";
+import ChatPanel from "./components/ChatPanel";
 import { fetchTranscript, generateSummary, getMockData } from "./services/apiService";
 import { TRANSCRIPT_LOADING_STEPS, SUMMARY_LOADING_STEPS } from "./data/mockData";
 import { useTheme } from "./hooks/useTheme";
@@ -38,6 +39,16 @@ export default function App() {
   const [jobs, setJobs] = useState([]); // Multi-video: array of jobs
   const [showHistory, setShowHistory] = useState(false);
   const [historyDetail, setHistoryDetail] = useState(null);
+  
+  // Chat state
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [activeChatContext, setActiveChatContext] = useState("");
+
+  // Helper: Open chat with specific transcript context
+  const openChatWithContext = useCallback((transcript) => {
+    setActiveChatContext(transcript);
+    setIsChatOpen(true);
+  }, []);
 
   // Helper: update a single job by id
   const updateJob = useCallback((id, patch) => {
@@ -245,6 +256,31 @@ export default function App() {
           onClose={() => setHistoryDetail(null)}
         />
       )}
+
+      {/* Floating Chat Button (Only show if there's a valid transcript context nearby) */}
+      {jobs.some(j => j.transcriptStatus === "success") || historyDetail ? (
+        <button 
+          className="app__floating-chat-btn"
+          onClick={() => {
+             // Use historyDetail transcript if open, otherwise latest successful job transcript
+             if (historyDetail) {
+               openChatWithContext(historyDetail.transcript);
+             } else {
+               const latestSuccess = jobs.find(j => j.transcriptStatus === "success");
+               if (latestSuccess) openChatWithContext(latestSuccess.transcriptData.transcript);
+             }
+          }}
+        >
+          💬 Hỏi AI
+        </button>
+      ) : null}
+
+      {/* Chat Drawer Panel */}
+      <ChatPanel 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+        transcript={activeChatContext} 
+      />
     </div>
   );
 }

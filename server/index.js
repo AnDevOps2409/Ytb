@@ -184,6 +184,70 @@ Quy tắc:
   }
 });
 
+// POST /api/chat — Chat realtime với video via LM Studio
+app.post("/api/chat", async (req, res) => {
+  const { transcript, messages } = req.body;
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: "Missing or invalid messages array" });
+  }
+
+  // Cắt transcript nếu quá dài (LM Studio nhỏ thường chịu được ~8k context)
+  const maxChars = 12000;
+  const trimmed = transcript && transcript.length > maxChars
+    ? transcript.slice(0, maxChars) + "\n\n[...nội dung phụ đề bị cắt bớt]"
+    : (transcript || "Không có nội dung phụ đề.");
+
+  const systemPrompt = `Bạn là một trợ lý AI thông minh, đóng vai trò là một người đồng hành cùng xem video với người dùng. 
+Dưới đây là phụ đề của video mà người dùng đang xem:
+
+--- PHỤ ĐỀ VIDEO ---
+${trimmed}
+--- KẾT THÚC PHỤ ĐỀ ---
+
+NHIỆM VỤ CỦA BẠN:
+1. Trả lời các câu hỏi của người dùng dựa vào nội dung video.
+2. QUAN TRỌNG: Nếu người dùng hỏi về các khái niệm, lore game, sự kiện, hay kiến thức chuyên sâu KHÔNG CÓ TRONG VIDEO, bạn HÃY SỬ DỤNG kiến thức nội tại của mình để giải thích cặn kẽ. Báo cho người dùng biết là "Video không nhắc chi tiết phần này, nhưng theo tôi được biết thì...".
+3. Trả lời bằng tiếng Việt, ngắn gọn, súc tích và thân thiện.
+4. Trả lời dưới định dạng Markdown (có thể in đậm, xuống dòng, viết list) để dễ nhìn.`;
+
+  try {
+    const response = await fetch(LM_STUDIO_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "default",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages
+        ],
+        temperature: 0.7, // Nhiệt độ cao hơn chút để AI sáng tạo khi chém gió
+        max_tokens: 1500,
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("LM Studio chat error:", response.status, errText);
+      return res.status(502).json({
+        error: "Không kết nối được AI Local. Hãy kiểm tra LM Studio.",
+      });
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content || "";
+
+    res.json({ reply: content });
+  } catch (err) {
+    console.error("Chat generation error:", err.message);
+    if (err.cause?.code === "ECONNREFUSED") {
+      return res.status(502).json({
+        error: "Không kết nối được LM Studio tại localhost:1234. Hãy mở LM Studio và load một model.",
+      });
+    }
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/history — get all entries
 app.get("/api/history", (req, res) => {
   try {
