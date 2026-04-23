@@ -1,81 +1,55 @@
 .url-input {
-  max-width: 640px;
-  margin: 0 auto;
+  width: 100%;
   animation: fadeInUp var(--transition-slow) forwards;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.url-input__header {
+.url-input--hero {
+  max-width: 720px;
+  margin: 15vh auto 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.url-input--compact {
+  max-width: 860px;
+  margin: 0 auto var(--space-6);
+}
+
+.url-input__hero-header {
   text-align: center;
   margin-bottom: var(--space-8);
+  animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.4s ease;
 }
 
-.url-input__icon {
-  display: flex;
-  justify-content: center;
+.url-input__hero-header--compact {
   margin-bottom: var(--space-4);
 }
 
-.url-input__icon svg {
-  filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.3));
+.url-input__hero-header--compact .url-input__hero-title {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  margin-bottom: 0;
 }
 
-.url-input__title {
-  font-size: var(--fs-2xl);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+.url-input__hero-title {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
   background: var(--accent-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+  line-height: 1.2;
 }
 
-.url-input__subtitle {
+.url-input__hero-subtitle {
   color: var(--text-secondary);
-  font-size: var(--fs-base);
-}
-
-/* Steps indicator */
-.url-input__steps {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--space-8);
-}
-
-.url-input__step {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.url-input__step-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-full);
-  background: var(--accent-gradient);
-  color: #fff;
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.url-input__step-text {
-  font-size: var(--fs-sm);
-  color: var(--text-secondary);
-}
-
-.url-input__step-arrow {
-  color: var(--text-muted);
-  font-size: var(--fs-lg);
+  font-size: var(--fs-md);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
 
 /* Input field */
@@ -134,6 +108,180 @@
   margin-top: var(--space-2);
   padding-left: var(--space-1);
   animation: slideDown var(--transition-fast) forwards;
+}
+
+/* Inline submit button inside input field */
+.url-input__btn-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--accent-gradient);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+  box-shadow: var(--accent-glow);
+}
+
+.url-input__btn-inline:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+}
+
+.url-input__btn-inline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.url-input__options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: var(--space-4);
+  gap: var(--space-4);
+}
+
+/* ── Language chips ───────────────────────────── */
+.url-input__lang-chips {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.url-input__lang-chip {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.url-input__lang-chip:hover:not(:disabled) {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.url-input__lang-chip.active {
+  background: var(--accent-gradient);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: var(--accent-glow);
+}
+
+.url-input__lang-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Custom language input */
+.url-input__custom-lang-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 100;
+}
+
+.url-input__lang-custom-input {
+  background: var(--bg-surface);
+  border: 1px solid var(--accent-primary);
+  color: var(--text-primary);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  outline: none;
+  width: 140px;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+}
+
+.url-input__lang-custom-input:focus {
+  background: var(--bg-elevated);
+}
+
+.url-input__lang-custom-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Dropdown suggestions */
+.url-input__custom-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 180px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-1);
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.url-input__custom-option {
+  padding: 8px 12px;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  transition: background 0.1s, color 0.1s;
+}
+
+.url-input__custom-option:hover {
+  background: rgba(124, 58, 237, 0.12);
+  color: var(--text-primary);
+}
+
+.url-input__custom-empty {
+  padding: 12px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-align: center;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-default);
+  margin: 4px;
+}
+
+.url-input__custom-empty strong {
+  color: var(--text-primary);
+  font-weight: 600;
+  display: block;
+  margin-top: 4px;
+}
+
+@media (max-width: 560px) {
+  .url-input__options-row {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 /* Action buttons */

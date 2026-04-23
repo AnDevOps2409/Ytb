@@ -4,7 +4,7 @@
 
 import { MOCK_VIDEO, MOCK_SUMMARY, TRANSCRIPT_LOADING_STEPS, SUMMARY_LOADING_STEPS } from "../data/mockData";
 
-const SERVER = "http://localhost:3001";
+export const SERVER = "http://localhost:3001";
 
 /**
  * Validate YouTube URL format.
@@ -15,12 +15,17 @@ export function isValidYouTubeUrl(url) {
   return pattern.test(url.trim());
 }
 
+// More permissive — accepts YouTube + any other video URL (for yt-dlp fallback)
+export function isValidVideoUrl(url) {
+  return /^https?:\/\/.+\..+/.test(url.trim());
+}
+
 /**
  * Fetch REAL transcript from a YouTube URL via Express server.
  */
-export async function fetchTranscript(url, onStepChange) {
-  if (!isValidYouTubeUrl(url)) {
-    throw new Error("Link YouTube không hợp lệ. Vui lòng kiểm tra lại.");
+export async function fetchTranscript(url, apiConfig = {}, onStepChange) {
+  if (!isValidVideoUrl(url)) {
+    throw new Error("Link video không hợp lệ. Vui lòng kiểm tra lại.");
   }
 
   // Show loading steps while calling server
@@ -29,7 +34,7 @@ export async function fetchTranscript(url, onStepChange) {
   const res = await fetch(`${SERVER}/api/transcript`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({ url, apiConfig }),
   });
 
   onStepChange?.(1);
@@ -43,34 +48,76 @@ export async function fetchTranscript(url, onStepChange) {
 
   onStepChange?.(2);
 
+  const sourceLabel = data.transcriptSource === "whisper"
+    ? "🎤 Whisper (AI)"
+    : (data.lang === "vi" ? "⚡ Subtitle (Tiếng Việt)" : `⚡ Subtitle (${data.lang})`);
+
   return {
     video: data.video || { title: "Không rõ", channel: "", duration: "", thumbnail: null, url },
     transcript: data.transcript,
-    source: data.lang === "vi" ? "YouTube Subtitles (Tiếng Việt)" : `YouTube Subtitles (${data.lang})`,
+    transcriptSource: data.transcriptSource || "subtitle",
+    source: sourceLabel,
   };
 }
 
 /**
- * Generate summary from a transcript via LM Studio (through server).
+ * Generate summary with standard await (Stream Disabled per user request).
+ * @param {string} transcript
+ * @param {string} targetLang
+ * @param {object} apiConfig
+ * @param {(token: string) => void} onChunk - (Unused but kept for compatibility)
+ * @param {(summary: object) => void} onDone - called with final parsed summary
+ * @param {(err: string) => void} onError - called on error
  */
-export async function generateSummary(transcript, onStepChange) {
-  onStepChange?.(0);
+export async function generateSummaryStream(transcript, targetLang = "vi", apiConfig = {}, onChunk, onDone, onError) {
+  let res;
+  try {
+    res = await fetch(`${SERVER}/api/summary`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ transcript, targetLang, apiConfig }),
+    });
+  } catch (err) {
+    onError?.(err.message || "Không thể kết nối server.");
+    return;
+  }
 
-  const res = await fetch(`${SERVER}/api/summary`, {
+  if (!res.ok) {
+    try {
+      const { error } = await res.json();
+      onError?.(error || "Không thể tạo tóm tắt. Thử lại sau.");
+    } catch {
+      onError?.("Không thể tạo tóm tắt. Thử lại sau.");
+    }
+    return;
+  }
+
+  try {
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    onDone?.(data);
+  } catch (e) {
+    onError?.(e.message || "Lỗi khi xử lý phản hồi từ AI.");
+  }
+}
+
+/**
+ * Optimize transcript text (grammar, punctuation, paragraphs) via AI
+ */
+export async function optimizeTranscript(transcript, targetLang = "vi", apiConfig = {}) {
+  const res = await fetch(`${SERVER}/api/optimize`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ transcript }),
+    body: JSON.stringify({ transcript, targetLang, apiConfig }),
   });
-
-  onStepChange?.(1);
 
   if (!res.ok) {
     const { error } = await res.json().catch(() => ({ error: "Lỗi không xác định." }));
-    throw new Error(error || "Không thể tạo tóm tắt. Thử lại sau.");
+    throw new Error(error || "Không thể tối ưu đoạn văn.");
   }
 
-  const summary = await res.json();
-  return summary;
+  const data = await res.json();
+  return data.optimizedTranscript;
 }
 
 /**
@@ -83,4 +130,40 @@ export function getMockData() {
     source: "Mock Data",
     summary: { ...MOCK_SUMMARY },
   };
+}
+
+/**
+ * Check if the LM Studio backend connection is active
+ */
+export async function checkLMStudioConnection() {
+  try {
+    const res = await fetch(`${SERVER}/api/lmstudio/status`);
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data.ok;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * Fetch full playlist metadata from the backend.
+ */
+export async function fetchPlaylist(url) {
+  if (!isValidVideoUrl(url)) {
+    throw new Error("Link playlist không hợp lệ.");
+  }
+
+  const res = await fetch(`${SERVER}/api/playlist`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url }),
+  });
+
+  if (!res.ok) {
+    const { error } = await res.json();
+    throw new Error(error || "Không thể lấy thông tin Playlist. Thử lại sau.");
+  }
+
+  return await res.json();
 }

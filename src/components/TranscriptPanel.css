@@ -109,3 +109,22 @@
   color: var(--text-muted);
   font-size: var(--fs-xs);
 }
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  .transcript-panel__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .transcript-panel__footer {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .transcript-panel__summary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

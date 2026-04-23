@@ -28,12 +28,12 @@ export const MOCK_SUMMARY = {
   shortSummary:
     "Video chia sẻ 6 phương pháp quản lý thời gian hiệu quả dành cho lập trình viên, bao gồm Pomodoro, Time Blocking, biết nói không, sử dụng công cụ phù hợp, chăm sóc sức khỏe, và deep work theo Cal Newport.",
   keyPoints: [
-    "Pomodoro Technique: Làm việc 25 phút, nghỉ 5 phút. Sau 4 chu kỳ nghỉ dài 15-30 phút. Tăng năng suất ~40%.",
-    "Time Blocking: Chia ngày thành các khối thời gian cố định cho từng loại công việc (code, review, fix bug, meeting, documentation).",
-    "Biết nói không: Không phải meeting nào cũng cần tham gia, set Do Not Disturb khi cần tập trung.",
-    "Công cụ hỗ trợ: Todoist/Notion cho task management, Toggl cho time tracking, Git commit nhỏ và thường xuyên.",
-    "Sleep & Exercise: Ngủ đủ 7-8 tiếng, tập 30 phút/ngày giúp giảm bug đáng kể.",
-    "Deep Work (Cal Newport): Cần những khoảng thời gian dài không bị gián đoạn cho công việc đòi hỏi tư duy cao.",
+    "Pomodoro Technique: Thay vì làm việc kiệt sức trong thời gian dài, hãy chia công việc ra làm 25 phút tập trung cao độ, sau đó nghỉ 5 phút. Sau 4 chu kỳ như vậy thì nghỉ dài 15-30 phút. Việc này giúp não bộ duy trì được sự minh mẫn và tăng năng suất khoảng 40%.",
+    "Time Blocking: Chia cấu trúc ngày làm việc của bạn thành các khối thời gian cố định cho từng loại công việc cụ thể. Việc nhóm các task giống nhau (như code, review PR, fix bug, họp hành) vào một block nhất định sẽ giảm thiểu lãng phí context-switching.",
+    "Bí quyết nói 'Không': Nhận biết đâu là việc ưu tiên và đâu là thứ làm xao nhãng. Không phải cuộc họp nào bạn cũng cần phải có mặt, và hãy thiết lập chế độ Do Not Disturb trên Slack/Teams khi thực sự cần không gian để xử lý logic phức tạp.",
+    "Công cụ hỗ trợ: Việc quản lý bằng đầu óc chưa bao giờ là an toàn, hãy sử dụng Todoist hay Notion để hệ thống hoá task. Đặc biệt, hãy áp dụng kỷ luật dùng Git với các commit nhò và chạy code thường xuyên.",
+    "Sleep & Exercise (Sức khoẻ cốt lõi): Một cơ thể mệt mỏi sẽ đẻ ra những hàm code đầy lỗi. Ngủ đủ 7-8 tiếng và duy trì vận động thể chất 30 phút mỗi ngày đóng vai trò quan trọng trong việc giữ não nhạy bén và giảm số bug tự sinh.",
+    "Deep Work (Làm việc sâu): Dựa trên khái niệm của Cal Newport, bạn cần tạo ra những vùng thời gian cực kỳ tĩnh lặng, hoàn toàn không bị gián đoạn, từ đó mới có thể giải quyết được các kiến trúc hệ thống phức tạp và công nghệ chuyên sâu."
   ],
   actionItems: [
     "Áp dụng Pomodoro Technique bắt đầu từ ngày mai",
@@ -43,7 +43,7 @@ export const MOCK_SUMMARY = {
     "Set Do Not Disturb schedule trên Slack",
     "Đặt mục tiêu ngủ đủ 7 tiếng mỗi đêm",
   ],
-  deadlines: "Không có deadline cụ thể. Nên bắt đầu áp dụng ngay từ tuần này.",
+  generationTime: "1.2",
 };
 
 export const TRANSCRIPT_LOADING_STEPS = [

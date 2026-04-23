@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { chatService } from "../services/chatService";
 import "./ChatPanel.css";
 
-export default function ChatPanel({ isOpen, onClose, transcript }) {
+export default function ChatPanel({ isOpen, onClose, transcript, apiConfig }) {
   const [messages, setMessages] = useState([]);
   const [inputVal, setInputVal] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const endOfMessagesRef = useRef(null);
 
   // Auto-scroll to bottom of chat
@@ -21,17 +22,20 @@ export default function ChatPanel({ isOpen, onClose, transcript }) {
 
     const userMessage = { role: "user", content: inputVal.trim() };
     const newMessages = [...messages, userMessage];
-    
+
     setMessages(newMessages);
     setInputVal("");
     setIsLoading(true);
+    setIsSearching(true);
 
     try {
-      // Send raw array of {role, content} to server
-      const replyContent = await chatService.sendMessage(transcript, newMessages);
-      const aiMessage = { role: "assistant", content: replyContent };
+      // Always search web automatically — AI will have web context to answer better
+      const { reply: replyContent, webSearched } = await chatService.sendMessage(transcript, newMessages, true, apiConfig);
+      setIsSearching(false);
+      const aiMessage = { role: "assistant", content: replyContent, webSearched };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (err) {
+      setIsSearching(false);
       const errorMessage = { role: "assistant", content: `❌ Lỗi: ${err.message}` };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -49,10 +53,8 @@ export default function ChatPanel({ isOpen, onClose, transcript }) {
   return (
     <div className={`chat-drawer ${isOpen ? "open" : ""}`}>
       <div className="chat-header">
-        <h3>💬 Chat với Video</h3>
-        <button onClick={onClose} className="chat-close-btn" aria-label="Close Chat">
-          ✕
-        </button>
+        <h3>💬 Chat với AI</h3>
+        <button onClick={onClose} className="chat-close-btn" aria-label="Close Chat">✕</button>
       </div>
 
       <div className="chat-body">
@@ -67,12 +69,25 @@ export default function ChatPanel({ isOpen, onClose, transcript }) {
         ) : (
           messages.map((msg, idx) => (
             <div key={idx} className={`chat-message ${msg.role}`}>
-              <div className="chat-bubble">{msg.content}</div>
+              <div className="chat-bubble">
+                {msg.webSearched && (
+                  <span className="chat-web-badge">🌐 Nguồn từ web</span>
+                )}
+                {msg.content}
+              </div>
             </div>
           ))
         )}
-        
-        {isLoading && (
+
+        {isSearching && (
+          <div className="chat-message assistant">
+            <div className="chat-bubble chat-searching-indicator">
+              🔍 Đang tìm kiếm trên web...
+            </div>
+          </div>
+        )}
+
+        {isLoading && !isSearching && (
           <div className="chat-message assistant">
             <div className="chat-bubble typing-indicator">
               <span></span><span></span><span></span>

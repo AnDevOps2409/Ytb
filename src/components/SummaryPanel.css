@@ -174,3 +174,157 @@
   font-weight: 500;
   display: inline-block;
 }
+
+/* Streaming Box */
+.summary-panel__stream-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.summary-panel__reasoning-box {
+  background: rgba(0, 0, 0, 0.02);
+  border-left: 3px solid var(--accent-primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: var(--space-3) var(--space-4);
+  min-height: 40px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+html[data-theme='dark'] .summary-panel__reasoning-box {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.summary-panel__reasoning-header {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.summary-panel__stream-box {
+  background: var(--bg-surface-hover);
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  min-height: 80px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.summary-panel__stream-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.summary-panel__cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background-color: var(--accent-primary);
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+/* -- LOADING SKELETON -- */
+.summary-panel__skeleton-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  animation: fade-in 0.5s ease;
+}
+
+.skeleton-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.skeleton-line {
+  height: 14px;
+  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--border-hover) 50%, var(--bg-surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.skeleton-title {
+  width: 40%;
+  height: 16px;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-short {
+  width: 70%;
+}
+
+.skeleton-bullet-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skeleton-bullet-line {
+  height: 12px;
+  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--border-hover) 50%, var(--bg-surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-left: 20px;
+  width: calc(100% - 20px);
+}
+
+.skeleton-box {
+  height: 36px;
+  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--border-hover) 50%, var(--bg-surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  width: 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.pulse-text {
+  animation: pulse-opacity 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-opacity {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

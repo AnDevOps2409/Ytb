@@ -1,7 +1,31 @@
 .app {
   min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  /* Sidebar width + remaining main width */
+  background: var(--bg-primary);
+  overflow-x: hidden;
+}
+
+.app__sidebar {
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-default);
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app__main {
+  position: relative;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .app__floating-chat-btn {
@@ -31,16 +55,17 @@
   box-shadow: 0 10px 25px rgba(124, 58, 237, 0.5);
 }
 
-
 .app__container {
   flex: 1;
-  max-width: 860px;
+  max-width: 900px;
   width: 100%;
   margin: 0 auto;
-  padding: var(--space-10) var(--space-6) var(--space-8);
+  padding: var(--space-8) var(--space-6) var(--space-8);
+  display: flex;
+  flex-direction: column;
 }
 
-/* History panel inline */
+/* Hide History Panel fully if it's integrated in sidebar, but we keep this for backwards compat during migration */
 .app__history {
   margin-top: var(--space-8);
 }
@@ -122,6 +147,7 @@
   flex-shrink: 0;
   transition: all var(--transition-fast);
 }
+
 .app__job-dismiss:hover {
   background: var(--bg-surface-hover);
   color: var(--text-primary);
@@ -134,6 +160,27 @@
 .app__job-card .processing {
   margin: var(--space-4);
   margin-bottom: 0;
+}
+
+.theme-sidebar-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.theme-sidebar-btn:hover {
+  color: var(--accent-primary);
+  background: var(--bg-surface-hover);
 }
 
 .app__job-card .summary-panel {
@@ -154,4 +201,33 @@
 .app__footer p {
   color: var(--text-muted);
   font-size: var(--fs-xs);
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  .app__job-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .app__job-status-row {
+    flex-wrap: wrap;
+  }
+
+  .app__job-dismiss {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  .app__job-card {
+    position: relative;
+  }
+
+  .app__floating-chat-btn {
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+  }
 }

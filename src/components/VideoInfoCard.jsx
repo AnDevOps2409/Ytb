@@ -1,6 +1,6 @@
 import "./VideoInfoCard.css";
 
-export default function VideoInfoCard({ video, source }) {
+export default function VideoInfoCard({ video, source, transcriptSource }) {
   return (
     <div className="video-card animate-fade-in">
       <div className="video-card__thumbnail">
@@ -25,6 +25,11 @@ export default function VideoInfoCard({ video, source }) {
         <div className="video-card__source">
           <span className="video-card__source-label">Nguồn:</span>
           <span className="video-card__source-badge">{source}</span>
+          {transcriptSource === "whisper" ? (
+            <span className="video-card__mode-badge video-card__mode-badge--whisper">🎤 Whisper</span>
+          ) : (
+            <span className="video-card__mode-badge video-card__mode-badge--subtitle">⚡ Subtitle</span>
+          )}
         </div>
       </div>
     </div>
